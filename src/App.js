@@ -4,10 +4,12 @@ import logo from './logo.svg';
 import './App.css';
 import { nanoid } from 'nanoid';
 import Selectable from 'selectable.js';
+import { useCallback } from 'react';
 
 function App() {
   const [siArrS, setSiArrS] = useState([]);
   const [currrentID, setCurrentID] = useState('');
+  /* выделение группы ячеек (selectable.js) не заработало
   const [selected, setSelected] = useState('');
   useEffect(() => {
     const tbody1 = document.getElementById('tbody1');
@@ -37,7 +39,7 @@ function App() {
     selectable.on('end', function (e, selected, unselected) {
       console.log('end', e, selected, unselected);
     });
-  });
+  });*/
   let sechID;
   useEffect(() => {
     console.log(document.URL, window.location.search);
@@ -243,27 +245,63 @@ function App() {
       setSiArrS(siArray);
     };
   };
-  const tdOnClick = (e) => {
-    console.log(e.target.id);
+
+  const [selectedSet, setSelectedSet] = useState(new Set());
+  function tdOnClick(e) {
+    console.log(
+      e.target.id,
+      e.target.getAttribute('colname'),
+      e.target.parentNode.rowIndex
+    );
+    setSelectedSet(selectedSet.add(e.target.id));
+    console.log('selectedSet', selectedSet, 'siArrS', siArrS);
     setCurrentID(e.target.id);
-    let siArrSMod = siArrS;
-    siArrSMod = siArrSMod.map((obj) => {
+    // let siArrSMod = siArrS;
+    let siArrSMod = siArrS.map((obj) => {
       Object.keys(obj).forEach((key) => {
-        if (obj[key].id == currrentID) {
-          obj[key].status = 'selected';
+        if (obj[key].id == e.target.id) {
+          obj[key].selected = 'selected';
+        }
+      });
+      return obj;
+    });
+    console.log(siArrSMod);
+    setSiArrS(siArrSMod);
+  }
+
+  function unSelectBtn() {
+    // if (e.key === 'Escape') {
+    // console.log(e.key);
+    setSelectedSet(new Set());
+    console.log('selectedSet', selectedSet, 'siArrS', siArrS);
+    let siArrSmod2 = siArrS;
+    siArrSmod2.map((obj) => {
+      Object.keys(obj).forEach((key) => {
+        if (obj[key].selected) {
+          obj[key].selected = '';
         }
       });
       return obj;
     });
     // console.log(siArrSMod);
-    setSiArrS(siArrSMod);
-  };
+    // setSiArrS(siArrSMod);
+    // }
+  }
+
+  useEffect(() => {
+    function NOOP() {}
+    window.addEventListener('keyup', NOOP);
+    return () => {
+      window.removeEventListener('keydown', NOOP);
+    };
+  }, []);
   function markWarning() {
     console.log(siArrS);
     let siArrSMod = siArrS;
     siArrSMod = siArrSMod.map((obj) => {
       Object.keys(obj).forEach((key) => {
-        if (obj[key].id == currrentID) {
+        // if (obj[key].id == currrentID) {
+        if (selectedSet.has(obj[key].id)) {
           obj[key].status = 'warning';
         }
       });
@@ -285,6 +323,7 @@ function App() {
       <div>hi</div>
       <button onClick={fdel}>отправить данные на сервер!</button>
       <button onClick={markWarning}>Пометить как ошибка</button>
+      <button onClick={unSelectBtn}>Снять выделение</button>
       <input type={'file'} onChange={readFile} />
 
       <table>
@@ -332,7 +371,10 @@ function App() {
               <td
                 id={item.naimTiSop?.id}
                 onClick={tdOnClick}
-                className={item.naimTiSop?.status}
+                className={
+                  item.naimTiSop?.status + ' ' + item.naimTiSop?.selected
+                }
+                colname={'naimTiSop'}
               >
                 {item.naimTiSop?.v}
               </td>
