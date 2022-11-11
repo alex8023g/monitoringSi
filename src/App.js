@@ -8,7 +8,7 @@ import { useCallback } from 'react';
 
 function App() {
   const [siArrS, setSiArrS] = useState([]);
-  const [currrentID, setCurrentID] = useState('');
+  const [appState, setAppState] = useState({});
   /* выделение группы ячеек (selectable.js) не заработало
   const [selected, setSelected] = useState('');
   useEffect(() => {
@@ -47,6 +47,7 @@ function App() {
     sechID = url.searchParams.get('sechID');
     console.log(sechID);
   }, []);
+
   const fdel = async () => {
     let sechId = {};
     sechId.id = sechID;
@@ -248,6 +249,7 @@ function App() {
 
   const [selectedSet, setSelectedSet] = useState(new Set());
   function tdOnClick(e) {
+    /*
     console.log(
       e.target.id,
       e.target.getAttribute('colname'),
@@ -267,6 +269,37 @@ function App() {
     });
     console.log(siArrSMod);
     setSiArrS(siArrSMod);
+    */
+  }
+
+  function tdOnClick2(e) {
+    let colname = e.target.getAttribute('colname');
+    let rowIndex = e.target.parentNode.rowIndex;
+    console.log(e.target.id, colname, rowIndex);
+    setAppState({
+      ...appState,
+      selectedCell: {
+        rowIndex: e.target.parentNode.rowIndex,
+        colname: e.target.getAttribute('colname'),
+      },
+    });
+    console.log('appState', appState);
+
+    let siArrMod = [...siArrS];
+    siArrMod.map((obj) => {
+      Object.keys(obj).forEach((key) => {
+        if (obj[key].selected) {
+          obj[key].selected = '';
+        }
+        if (obj[key].id === e.target.id) {
+          obj[key].selected = 'selected';
+        }
+      });
+      return obj;
+    });
+    console.log(siArrMod);
+    // siArrMod[index - 1][colname].selected = 'selected';
+    setSiArrS(siArrMod);
   }
 
   function unSelectBtn() {
@@ -289,19 +322,55 @@ function App() {
   }
 
   useEffect(() => {
-    function NOOP() {}
-    window.addEventListener('keyup', NOOP);
+    function selectMany(e) {
+      console.log(e);
+      if (e.shiftKey && e.code === 'ArrowDown') {
+        let siArrSMod = [...siArrS];
+        let nextArrIndex = appState.selectedCell.rowIndex;
+        let colname = appState.selectedCell.colname;
+
+        if (siArrSMod.length > nextArrIndex) {
+          siArrSMod[nextArrIndex][colname].selected = 'selected';
+          setSiArrS(siArrSMod);
+          setAppState({
+            ...appState,
+            selectedCell: {
+              rowIndex: nextArrIndex + 1,
+              colname: colname,
+            },
+          });
+        }
+      }
+      if (e.shiftKey && e.code === 'ArrowUp') {
+        let siArrSMod = [...siArrS];
+        let nextArrIndex = appState.selectedCell.rowIndex;
+        let colname = appState.selectedCell.colname;
+
+        if (siArrSMod.length > nextArrIndex) {
+          siArrSMod[nextArrIndex][colname].selected = '';
+          setSiArrS(siArrSMod);
+          setAppState({
+            ...appState,
+            selectedCell: {
+              rowIndex: nextArrIndex - 1,
+              colname: colname,
+            },
+          });
+        }
+      }
+    }
+    window.addEventListener('keydown', selectMany);
     return () => {
-      window.removeEventListener('keydown', NOOP);
+      window.removeEventListener('keydown', selectMany);
     };
-  }, []);
+  }, [appState, siArrS]);
+
   function markWarning() {
     console.log(siArrS);
-    let siArrSMod = siArrS;
+    let siArrSMod = [...siArrS];
     siArrSMod = siArrSMod.map((obj) => {
       Object.keys(obj).forEach((key) => {
-        // if (obj[key].id == currrentID) {
-        if (selectedSet.has(obj[key].id)) {
+        if (obj[key].selected === 'selected') {
           obj[key].status = 'warning';
         }
       });
@@ -358,43 +427,22 @@ function App() {
             <th>Каналы80</th>
           </tr>
         </thead>
-        <tbody id='tbody1'>
-          {siArrS.map((item) => (
-            <tr key={item.kodTi80.v}>
-              <td>{item.naimTi60?.v}</td>
-              <td>{item.kodTi60?.v}</td>
-              <td>{item.tipSch60?.v}</td>
-              <td></td>
-              <td>{item.tiAiis.v}</td>
-              <td>{item.gr?.v}</td>
-              <td>{item.numTiSop?.v}</td>
-              <td
-                id={item.naimTiSop?.id}
-                onClick={tdOnClick}
-                className={
-                  item.naimTiSop?.status + ' ' + item.naimTiSop?.selected
-                }
-                colname={'naimTiSop'}
-              >
-                {item.naimTiSop?.v}
-              </td>
-              <td onMouseDown={tdOnMD}>{item.naimTi80?.v}</td>
-              <td>{item.naimTi82?.v}</td>
-              <td className={item.numSchSop?.status}>{item.numSchSop?.v}</td>
-              <td className={item.numSchDB?.status}>{item.numSchDB?.v}</td>
-              <td className={item.numSchSch?.status}>{item.numSchSch?.v}</td>
-              <td className={item.tipSchSop?.status}>{item.tipSchSop?.v}</td>
-              <td className={item.tipSch80?.status}>{item.tipSch80?.v}</td>
-              <td className={item.tipSchSch?.status}>{item.tipSchSch?.v}</td>
-              <td className={item.tipSchDB?.status}>{item.tipSchDB?.v}</td>
-              <td className={item.kttSop?.status}>{item.kttSop?.v}</td>
-              <td className={item.kttDB?.status}>{item.kttDB?.v}</td>
-              <td className={item.ktnSop?.status}>{item.ktnSop?.v}</td>
-              <td className={item.ktnDB?.status}>{item.ktnDB?.v}</td>
-              <td>{item.kodTi80?.v}</td>
-              <td className={item.kanaly80?.status}>{item.kanaly80?.v}</td>
-            </tr>
-          ))}
+        <tbody id='tbody1' onClick={tdOnClick2}>
+          {siArrS.map((item) => {
+            let tdContent = Object.keys(item).map((param) => {
+              if (param === 'id') return '';
+              return (
+                <td
+                  id={item[param].id}
+                  colname={param}
+                  className={item[param].status + ' ' + item[param].selected}
+                >
+                  {item[param].v}
+                </td>
+              );
+            });
+            return <tr key={item.kodTi80.v}> {tdContent} </tr>;
+          })}
         </tbody>
       </table>
     </div>
@@ -402,3 +450,106 @@ function App() {
 }
 
 export default App;
+
+/*
+<tr key={item.kodTi80.v}>
+              <td
+                colname={'naimTi60'}
+                className={
+                  item.naimTi60?.status + ' ' + item.naimTi60?.selected
+                }
+              >
+                {item.naimTi60?.v}
+              </td>
+              <td
+                colname={'kodTi60'}
+                className={item.kodTi60?.status + ' ' + item.kodTi60?.selected}
+              >
+                {item.kodTi60?.v}
+              </td>
+              <td
+                colname={'tipSch60'}
+                className={
+                  item.tipSch60?.status + ' ' + item.tipSch60?.selected
+                }
+              >
+                {item.tipSch60?.v}
+              </td>
+              <td
+                colname={'kanaly60'}
+                className={
+                  item.kanaly60?.status + ' ' + item.kanaly60?.selected
+                }
+              ></td>
+              <td
+                colname={'tiAiis'}
+                className={item.tiAiis?.status + ' ' + item.tiAiis?.selected}
+              >
+                {item.tiAiis.v}
+              </td>
+              <td
+                colname={'gr'}
+                className={item.gr?.status + ' ' + item.gr?.selected}
+              >
+                {item.gr?.v}
+              </td>
+              <td
+                colname={'numTiSop'}
+                className={
+                  item.numTiSop?.status + ' ' + item.numTiSop?.selected
+                }
+              >
+                {item.numTiSop?.v}
+              </td>
+              <td
+                colname={'naimTiSop'}
+                id={item.naimTiSop?.id}
+                className={
+                  item.naimTiSop?.status + ' ' + item.naimTiSop?.selected
+                }
+              >
+                {item.naimTiSop?.v}
+              </td>
+              <td colname={'naimTi80'} onMouseDown={tdOnMD}>
+                {item.naimTi80?.v}
+              </td>
+              <td colname={'naimTi82'}>{item.naimTi82?.v}</td>
+              <td colname={'numSchSop'} className={item.numSchSop?.status}>
+                {item.numSchSop?.v}
+              </td>
+              <td colname={'numSchDB'} className={item.numSchDB?.status}>
+                {item.numSchDB?.v}
+              </td>
+              <td colname={'numSchSch'} className={item.numSchSch?.status}>
+                {item.numSchSch?.v}
+              </td>
+              <td colname={'tipSchSop'} className={item.tipSchSop?.status}>
+                {item.tipSchSop?.v}
+              </td>
+              <td colname={'tipSch80'} className={item.tipSch80?.status}>
+                {item.tipSch80?.v}
+              </td>
+              <td colname={'tipSchSch'} className={item.tipSchSch?.status}>
+                {item.tipSchSch?.v}
+              </td>
+              <td colname={'tipSchDB'} className={item.tipSchDB?.status}>
+                {item.tipSchDB?.v}
+              </td>
+              <td colname={'kttSop'} className={item.kttSop?.status}>
+                {item.kttSop?.v}
+              </td>
+              <td colname={'kttDB'} className={item.kttDB?.status}>
+                {item.kttDB?.v}
+              </td>
+              <td colname={'ktnSop'} className={item.ktnSop?.status}>
+                {item.ktnSop?.v}
+              </td>
+              <td colname={'ktnDB'} className={item.ktnDB?.status}>
+                {item.ktnDB?.v}
+              </td>
+              <td colname={'kodTi80'}>{item.kodTi80?.v}</td>
+              <td colname={'kanaly80'} className={item.kanaly80?.status}>
+                {item.kanaly80?.v}
+              </td>
+            </tr>
+            ))}*/
