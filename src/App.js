@@ -324,11 +324,10 @@ function App() {
   useEffect(() => {
     function selectMany(e) {
       console.log(e);
+      let siArrSMod = [...siArrS];
+      let nextArrIndex = appState.selectedCell.rowIndex;
+      let colname = appState.selectedCell.colname;
       if (e.shiftKey && e.code === 'ArrowDown') {
-        let siArrSMod = [...siArrS];
-        let nextArrIndex = appState.selectedCell.rowIndex;
-        let colname = appState.selectedCell.colname;
-
         if (siArrSMod.length > nextArrIndex) {
           siArrSMod[nextArrIndex][colname].selected = 'selected';
           setSiArrS(siArrSMod);
@@ -342,21 +341,19 @@ function App() {
         }
       }
       if (e.shiftKey && e.code === 'ArrowUp') {
-        let siArrSMod = [...siArrS];
-        let nextArrIndex = appState.selectedCell.rowIndex;
-        let colname = appState.selectedCell.colname;
+        // if (siArrSMod.length > nextArrIndex) {
+        nextArrIndex = appState.selectedCell.rowIndex;
+        siArrSMod[nextArrIndex - 1][colname].selected = '';
+        setSiArrS(siArrSMod);
+        setAppState({
+          ...appState,
+          selectedCell: {
+            rowIndex: nextArrIndex - 1,
+            colname: colname,
+          },
+        });
 
-        if (siArrSMod.length > nextArrIndex) {
-          siArrSMod[nextArrIndex][colname].selected = '';
-          setSiArrS(siArrSMod);
-          setAppState({
-            ...appState,
-            selectedCell: {
-              rowIndex: nextArrIndex - 1,
-              colname: colname,
-            },
-          });
-        }
+        // }
       }
     }
     window.addEventListener('keydown', selectMany);
