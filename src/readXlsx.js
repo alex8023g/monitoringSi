@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import ExcelJS from 'exceljs';
+import { sameCharEn, sameCharRu } from './constants.js';
 
 export const readXlsx = async (e) => {
   const workbook = new ExcelJS.Workbook();
@@ -17,48 +18,6 @@ export const readXlsx = async (e) => {
       // console.log(row[17])
 
       function sameChar(str) {
-        const sameCharEn = [
-          'A',
-          'a',
-          'B',
-          'C',
-          'c',
-          'E',
-          'e',
-          'H',
-          'K',
-          'k',
-          'M',
-          'O',
-          'o',
-          'P',
-          'p',
-          'T',
-          'X',
-          'x',
-          'y',
-        ];
-        const sameCharRu = [
-          'А',
-          'а',
-          'В',
-          'С',
-          'с',
-          'Е',
-          'е',
-          'Н',
-          'К',
-          'к',
-          'М',
-          'О',
-          'о',
-          'Р',
-          'р',
-          'Т',
-          'Х',
-          'х',
-          'у',
-        ];
         sameCharEn.forEach((item, index) => {
           let re = new RegExp(item, 'g');
           // console.log(str);

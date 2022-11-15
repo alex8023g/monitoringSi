@@ -25,5 +25,18 @@ td {
 }
 
 .selected {
-  border: 2px solid orange;
+  outline: 2px solid orange;
+}
+#input-xlsx {
+  width: 130px;
+  margin-right: 5px;
+}
+
+#input-xlsx::before {
+  content: 'Выберите Св-1.xlsx';
+  padding: 3px 5px 1px 3px;
+  position: absolute;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: rgb(236, 236, 236);
 }
