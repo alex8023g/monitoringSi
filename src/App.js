@@ -98,25 +98,6 @@ function App() {
     setSiState(siArrMod);
   }
 
-  function unSelectBtn() {
-    // if (e.key === 'Escape') {
-    // console.log(e.key);
-    setSelectedSet(new Set());
-    console.log('selectedSet', selectedSet, 'siState', siState);
-    let siStatemod2 = siState;
-    siStatemod2.map((obj) => {
-      Object.keys(obj).forEach((key) => {
-        if (obj[key].selected) {
-          obj[key].selected = '';
-        }
-      });
-      return obj;
-    });
-    // console.log(siStateMod);
-    // setSiState(siStateMod);
-    // }
-  }
-
   useEffect(() => {
     function selectMany(e) {
       let nextArrIndex = appState.selectedCell.rowIndex;
@@ -164,21 +145,29 @@ function App() {
 
   function markWarning() {
     console.log(siState);
-    let siStateMod = [...siState];
-    siStateMod = siStateMod.map((obj) => {
-      Object.keys(obj).forEach((key) => {
-        if (obj[key].selected === 'selected') {
-          obj[key].status = 'warning';
-        }
+    setSiState((state) => {
+      return state.map((obj) => {
+        Object.keys(obj).forEach((key) => {
+          if (obj[key].selected === 'selected') {
+            obj[key].status = 'warning';
+          }
+        });
+        return obj;
       });
-      return obj;
     });
-    console.log(siStateMod);
-    setSiState(siStateMod);
   }
 
-  function tdOnMD(e) {
-    console.log(e);
+  function markCorrect() {
+    setSiState((state) => {
+      return state.map((obj) => {
+        Object.keys(obj).forEach((key) => {
+          if (obj[key].selected === 'selected') {
+            obj[key].status = 'correct';
+          }
+        });
+        return obj;
+      });
+    });
   }
 
   function handleRadioBtn(e) {
@@ -198,7 +187,7 @@ function App() {
       <div>hi</div>
       <button onClick={fdel}>отправить данные на сервер!</button>
       <button onClick={markWarning}>Пометить как ошибка</button>
-      <button onClick={unSelectBtn}>Снять выделение</button>
+      <button onClick={markCorrect}>Пометить как корр</button>
       <input id='input-xlsx' type={'file'} onChange={readFileXlsx} />
       <input
         id='radioBtnId1'

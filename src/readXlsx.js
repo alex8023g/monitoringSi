@@ -87,20 +87,33 @@ export const readXlsx = async (e) => {
           siObj.tipSchSop.v,
           siObj.tipSch80.v,
           // siObj.tipSchDB.v,
-          siObj.tipSchSch.v,
+          // siObj.tipSchSch.v,
         ]);
         console.log(setX, setX.size);
         if (setX.size == 1) {
           siObj.tipSchSop.status = 'correct';
           siObj.tipSch80.status = 'correct';
-          siObj.tipSchDB.status = 'correct';
-          siObj.tipSchSch.status = 'correct';
+          // siObj.tipSchDB.status = 'correct';
+          // siObj.tipSchSch.status = 'correct';
         } else {
           siObj.tipSchSop.status = 'warning';
           siObj.tipSch80.status = 'warning';
-          siObj.tipSchDB.status = 'warning';
+          // siObj.tipSchDB.status = 'warning';
+          // siObj.tipSchSch.status = 'warning';
+        }
+
+        setX = new Set([
+          siObj.tipSchSop.v,
+          siObj.tipSch80.v,
+          siObj.tipSchSch.v,
+        ]);
+        console.log(setX, setX.size);
+        if (setX.size == 1) {
+          siObj.tipSchSch.status = 'correct';
+        } else {
           siObj.tipSchSch.status = 'warning';
         }
+
         setX = new Set([
           siObj.numSchSop.v,
           siObj.numSchDB.v,
