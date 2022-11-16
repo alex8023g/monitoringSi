@@ -22,6 +22,7 @@ const app = express();
 //app.set('view engine', 'html');
 app.use(express.json());
 app.use(express.static(path.resolve('./build')));
+app.use(express.static(path.resolve('./planrabot')));
 app.use(cookieParser());
 app.use(cors());
 
@@ -63,7 +64,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/readsech', auth(), (req, res) => {
-  res.sendfile('readSech.html');
+  res.sendFile(path.resolve('./planrabot/readSech.html'));
 });
 
 app.get('/monitoringsi', (req, res) => {
