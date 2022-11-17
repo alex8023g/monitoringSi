@@ -22,21 +22,21 @@ function App() {
     console.log(sechID);
   }, []);
 
-  const fdel = async () => {
+  const saveSiData = async () => {
     let sechId = {};
     sechId.id = sechID;
     console.log(`sechId`, sechId);
 
-    let delSech = await fetch(`http://localhost:3001/api/delsech`, {
+    let delSech = await fetch(`http://localhost:8080/api/savesidata`, {
       method: 'post',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(sechId),
+      body: JSON.stringify('sechId'),
     });
 
     delSech.json();
-    console.log(`/api/delsech`, delSech);
+    console.log(`/api/savesidata`, delSech);
   };
 
   const readFileXlsx = async (e) => {
@@ -185,7 +185,7 @@ function App() {
         <img src={logo} className='App-logo' alt='logo' />
       </header>
       <div>hi</div>
-      <button onClick={fdel}>отправить данные на сервер!</button>
+      <button onClick={saveSiData}>отправить данные на сервер!</button>
       <button onClick={markWarning}>Пометить как ошибка</button>
       <button onClick={markCorrect}>Пометить как корр</button>
       <input id='input-xlsx' type={'file'} onChange={readFileXlsx} />
