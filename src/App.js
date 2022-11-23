@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { nanoid } from 'nanoid';
-import Selectable from 'selectable.js';
 import { readXlsx } from './readXlsx.js';
+import { readDBxlsxMod } from './readDBxlsxMod.js';
 import { colFullName, colOrderObj } from './constants.js';
 
 function App() {
@@ -43,6 +43,12 @@ function App() {
     let data = await readXlsx(e);
     setSiState(data);
   };
+
+  const readDBxlsx = async (e) => {
+    let data = await readDBxlsxMod(e, siState);
+    setSiState(data);
+  };
+
   const [selectedSet, setSelectedSet] = useState(new Set());
   function tdOnClick(e) {
     /*
@@ -189,6 +195,7 @@ function App() {
       <button onClick={markWarning}>Пометить как ошибка</button>
       <button onClick={markCorrect}>Пометить как корр</button>
       <input id='input-xlsx' type={'file'} onChange={readFileXlsx} />
+      <input id='input-dbxlsx-1' type={'file'} onChange={readDBxlsx} />
       <input
         id='radioBtnId1'
         type='radio'
